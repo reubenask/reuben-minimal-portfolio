@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  background: #040908;
+  font-family:
+    "SF Mono", "Cascadia Mono", ui-monospace, Menlo, Monaco, Consolas,
+    monospace;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.archive-input {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.045);
+  padding: 0.85rem 1rem;
+  color: rgb(241 245 249);
+  outline: none;
+}
+
+.archive-input:focus {
+  border-color: rgba(103, 232, 249, 0.45);
+  box-shadow: 0 0 0 1px rgba(103, 232, 249, 0.18);
+}
+
+select.archive-input option {
+  background: #071211;
+  color: rgb(241 245 249);
+}
+
+.input-field {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  padding: 9px 11px;
+  color: #EAFBF8;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: rgba(34, 211, 238, 0.42);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.14);
+}
+
+.input-field option {
+  background: #071211;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.25);
+}

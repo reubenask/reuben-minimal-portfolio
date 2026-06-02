@@ -11,11 +11,11 @@ const FOLDER_ANGLES: Record<string, number> = {
   profile:    65,
 };
 
-const FOLDER_RADIUS = 300; // center → folder distance
+const FOLDER_RADIUS = 330; // center → folder distance
 
 // Mind-map tree branching constants
-const BRANCH_LEN   = 165; // folder → children spine distance
-const CHILD_GAP    = 58;  // perpendicular gap between siblings
+const BRANCH_LEN   = 235; // folder → children spine distance
+const CHILD_GAP    = 98;  // perpendicular gap between siblings
 
 function toRad(deg: number) { return (deg * Math.PI) / 180; }
 
@@ -58,8 +58,9 @@ export function getInitialPositions(
 
     children.forEach((item, i) => {
       const perpOffset = i * CHILD_GAP - totalSpan / 2;
-      const childX = fx + branchX * BRANCH_LEN + perpX * perpOffset;
-      const childY = fy + branchY * BRANCH_LEN + perpY * perpOffset;
+      const arcPush = Math.abs(perpOffset) * 0.16;
+      const childX = fx + branchX * (BRANCH_LEN + arcPush) + perpX * perpOffset;
+      const childY = fy + branchY * (BRANCH_LEN + arcPush) + perpY * perpOffset;
       positions[item.id]    = { x: childX, y: childY };
       childOffsets[item.id] = { dx: childX - fx, dy: childY - fy };
       parentMap[item.id]    = folder.id;

@@ -5,6 +5,8 @@ import { initialGraphData } from '../data/graphData';
 const STORAGE_KEY    = 'uba_graph_state';
 const POSITIONS_KEY  = 'uba_node_positions';
 const AVATAR_KEY     = 'uba_avatar';
+const LAYOUT_VERSION_KEY = 'uba_layout_version';
+const LAYOUT_VERSION = 'wide-child-arc-v2';
 
 function deepClone<T>(obj: T): T { return JSON.parse(JSON.stringify(obj)); }
 
@@ -25,7 +27,19 @@ function loadSaved(): GraphNode {
   return deepClone(initialGraphData);
 }
 function loadPositions(): Record<string, { x: number; y: number }> {
-  try { const r = localStorage.getItem(POSITIONS_KEY); if (r) return JSON.parse(r); } catch { /* */ }
+  try {
+    const r = localStorage.getItem(POSITIONS_KEY);
+    if (!r) return {};
+    const saved = JSON.parse(r) as Record<string, { x: number; y: number }>;
+    if (localStorage.getItem(LAYOUT_VERSION_KEY) !== LAYOUT_VERSION) {
+      const primaryIds = new Set(['center', ...(initialGraphData.children ?? []).map((node) => node.id)]);
+      const next = Object.fromEntries(Object.entries(saved).filter(([id]) => primaryIds.has(id)));
+      localStorage.setItem(POSITIONS_KEY, JSON.stringify(next));
+      localStorage.setItem(LAYOUT_VERSION_KEY, LAYOUT_VERSION);
+      return next;
+    }
+    return saved;
+  } catch { /* */ }
   return {};
 }
 

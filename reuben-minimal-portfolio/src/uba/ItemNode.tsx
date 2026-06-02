@@ -105,11 +105,32 @@ export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, 
           </div>
         </foreignObject>
       ) : (
-        <text x={x} y={y + r + 14} textAnchor="middle"
-          fill="#31423C" fontSize={7.5}
-          letterSpacing={1.2} fontFamily="'IBM Plex Mono', monospace" fontWeight={500}>
-          {node.label.toUpperCase()}
-        </text>
+        <foreignObject x={x - 62} y={y + r + 5} width={124} height={32} style={{ overflow: 'visible', pointerEvents: 'none' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            minHeight: 19, padding: '3px 7px',
+            borderRadius: 999,
+            border: '1px solid rgba(92,78,55,0.12)',
+            background: 'rgba(255,250,241,0.78)',
+            boxShadow: '0 8px 20px rgba(83,65,38,0.10)',
+            backdropFilter: 'blur(8px)',
+          }}>
+            <span style={{
+              color: '#263A34',
+              fontSize: 8,
+              lineHeight: 1.12,
+              letterSpacing: '0.09em',
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontWeight: 700,
+              textAlign: 'center',
+              textTransform: 'uppercase',
+              whiteSpace: 'normal',
+              overflowWrap: 'anywhere',
+            }}>
+              {node.label}
+            </span>
+          </div>
+        </foreignObject>
       )}
     </motion.g>
   );

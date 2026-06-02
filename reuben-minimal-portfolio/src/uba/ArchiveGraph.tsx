@@ -166,11 +166,11 @@ export function ArchiveGraph({
         position: 'relative', width: '100%', height: '100%',
         overflow: 'hidden', cursor: 'grab', userSelect: 'none',
         background: `
-          radial-gradient(circle at 50% 46%, rgba(34,211,238,0.12), transparent 34%),
-          radial-gradient(circle at 73% 62%, rgba(214,168,79,0.08), transparent 28%),
-          linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
-          #040A09
+          radial-gradient(circle at 50% 43%, rgba(15,118,110,0.13), transparent 33%),
+          radial-gradient(circle at 74% 64%, rgba(184,134,64,0.16), transparent 30%),
+          linear-gradient(rgba(53,66,57,0.075) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(53,66,57,0.075) 1px, transparent 1px),
+          #F4E9D4
         `,
         backgroundSize: 'auto, auto, 44px 44px, 44px 44px, auto',
       }}
@@ -247,9 +247,9 @@ export function ArchiveGraph({
       {/* Interaction guide */}
       <div style={{
         position: 'absolute', bottom: 12, left: 12,
-        border: '1px solid rgba(148,163,184,0.16)', background: 'rgba(7,18,17,0.76)',
+        border: '1px solid rgba(92,78,55,0.18)', background: 'rgba(255,250,241,0.82)',
         borderRadius: 18,
-        padding: '12px 14px', boxShadow: '0 20px 60px rgba(0,0,0,0.24)',
+        padding: '12px 14px', boxShadow: '0 20px 60px rgba(83,65,38,0.16)',
         zIndex: 10, display: 'flex', flexDirection: 'column', gap: 1,
         backdropFilter: 'blur(18px)',
       }}>
@@ -259,27 +259,27 @@ export function ArchiveGraph({
           '⊹ Drag nodes to reposition',
           '◎ Scroll to zoom · Drag to pan',
         ].map((h) => (
-          <p key={h} style={{ fontSize: 8, letterSpacing: '0.1em', color: '#6F8F8A',
+          <p key={h} style={{ fontSize: 8, letterSpacing: '0.1em', color: '#766B5B',
             fontFamily: "'IBM Plex Mono', monospace", pointerEvents: 'none' }}>{h}</p>
         ))}
         <button onClick={fitToView} style={{
           marginTop: 5, padding: '3px 8px',
-          border: '1px solid rgba(34,211,238,0.30)', borderRadius: 999,
-          background: 'rgba(34,211,238,0.10)', color: '#EAFBF8',
+          border: '1px solid rgba(15,118,110,0.30)', borderRadius: 999,
+          background: 'rgba(15,118,110,0.10)', color: '#0F5B55',
           fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
           fontFamily: "'IBM Plex Mono', monospace", cursor: 'pointer',
-          boxShadow: '0 0 24px rgba(34,211,238,0.08)',
+          boxShadow: '0 0 24px rgba(15,118,110,0.08)',
         }}>⊹ FIT TO VIEW</button>
       </div>
 
       <div style={{
         position: 'absolute', bottom: 12, right: 12,
-        fontSize: 9, color: '#6F8F8A', letterSpacing: '0.15em',
+        fontSize: 9, color: '#756851', letterSpacing: '0.15em',
         fontFamily: "'IBM Plex Mono', monospace",
-        border: '1px solid rgba(148,163,184,0.12)',
+        border: '1px solid rgba(92,78,55,0.16)',
         borderRadius: 999,
         padding: '6px 10px',
-        background: 'rgba(7,18,17,0.62)',
+        background: 'rgba(255,250,241,0.78)',
         backdropFilter: 'blur(14px)',
       }}>{Math.round(scale * 100)}%</div>
     </div>

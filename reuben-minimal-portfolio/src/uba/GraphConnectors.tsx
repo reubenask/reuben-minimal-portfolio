@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import type { GraphNode } from './types';
 
-const LINE_CENTER = 'rgba(34,211,238,0.34)';
-const LINE_CHILD  = 'rgba(214,168,79,0.62)';
-const DOT_COLOR   = '#8DF5EF';
+const LINE_CENTER = 'rgba(15,118,110,0.50)';
+const LINE_CHILD  = 'rgba(132,93,38,0.62)';
+const DOT_COLOR   = '#0F766E';
 
 interface ConnectorsProps {
   root: GraphNode;
@@ -33,7 +33,7 @@ export function GraphConnectors({ root, positions }: ConnectorsProps) {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
             />
-            <circle cx={fp.x} cy={fp.y} r={3} fill="#8DF5EF" opacity={0.7} />
+            <circle cx={fp.x} cy={fp.y} r={3} fill={DOT_COLOR} opacity={0.72} />
 
             {/* Folder → Children (curved lines, only when expanded) */}
             {visibleChildren.map((item, i) => {
@@ -57,7 +57,7 @@ export function GraphConnectors({ root, positions }: ConnectorsProps) {
                     transition={{ duration: 0.35, delay: i * 0.06 }}
                   />
                   <motion.circle cx={ip.x} cy={ip.y} r={3}
-                    fill={DOT_COLOR} stroke="rgba(255,255,255,0.18)" strokeWidth={0.6} opacity={0.65}
+                    fill={DOT_COLOR} stroke="rgba(255,250,241,0.74)" strokeWidth={0.6} opacity={0.7}
                     initial={{ opacity: 0 }} animate={{ opacity: 0.65 }}
                     exit={{ opacity: 0 }}
                     transition={{ delay: i * 0.06 + 0.2 }}

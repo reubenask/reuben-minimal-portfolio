@@ -106,7 +106,7 @@ export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, 
         </foreignObject>
       ) : (
         <text x={x} y={y + r + 14} textAnchor="middle"
-          fill="#A7B8B4" fontSize={7.5}
+          fill="#31423C" fontSize={7.5}
           letterSpacing={1.2} fontFamily="'IBM Plex Mono', monospace" fontWeight={500}>
           {node.label.toUpperCase()}
         </text>

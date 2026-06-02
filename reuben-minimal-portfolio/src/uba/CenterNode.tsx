@@ -39,7 +39,7 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
       {/* Orbit rings */}
       {[HALF + 45, HALF + 80, HALF + 115].map((r, i) => (
         <circle key={r} cx={x} cy={y} r={r} fill="none"
-          stroke="rgba(34,211,238,0.10)"
+          stroke="rgba(15,118,110,0.18)"
           strokeWidth={i === 0 ? 1 : 0.6}
           strokeDasharray={i === 2 ? '5 9' : i === 1 ? '2 6' : undefined} />
       ))}
@@ -77,10 +77,10 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
       )}
 
       <text x={x} y={y + HALF + 18} textAnchor="middle"
-        fill="#EAFBF8" fontSize={8.5} fontWeight={700} letterSpacing={3}
+        fill="#182522" fontSize={8.5} fontWeight={700} letterSpacing={3}
         fontFamily="'IBM Plex Mono', monospace">{node.label}</text>
       <text x={x} y={y + HALF + 30} textAnchor="middle"
-        fill="#6F8F8A" fontSize={7} letterSpacing={1.5}
+        fill="#6E6251" fontSize={7} letterSpacing={1.5}
         fontFamily="'IBM Plex Mono', monospace">◆ IDENTITY NODE ◆</text>
 
       {/* Camera upload button */}

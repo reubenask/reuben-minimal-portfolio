@@ -12,9 +12,10 @@ interface CenterNodeProps {
   onDragStart: (e: React.MouseEvent) => void;
   onAvatarUpload: (dataUrl: string) => void;
   onAddFolder?: () => void;
+  isEditable: boolean;
 }
 
-export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragStart, onAvatarUpload }: CenterNodeProps) {
+export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragStart, onAvatarUpload, isEditable }: CenterNodeProps) {
   const SIZE = 148;
   const HALF = SIZE / 2;
   const fileRef = useRef<HTMLInputElement>(null);
@@ -32,7 +33,7 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ cursor: 'grab', transformOrigin: `${x}px ${y}px` }}
+      style={{ cursor: isEditable ? 'grab' : 'pointer', transformOrigin: `${x}px ${y}px` }}
       onMouseDown={onDragStart}
       onClick={onClick}
     >
@@ -83,20 +84,21 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
         fill="#6E6251" fontSize={7} letterSpacing={1.5}
         fontFamily="'IBM Plex Mono', monospace">◆ IDENTITY NODE ◆</text>
 
-      {/* Camera upload button */}
-      <foreignObject x={x + HALF - 20} y={y + HALF - 18} width={24} height={24} style={{ overflow: 'visible' }}>
-        <div title="Upload photo"
-          style={{
-            width: 24, height: 24, border: '1px solid rgba(34,211,238,0.32)', borderRadius: 8,
-            background: '#0F1F1D', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', boxShadow: '0 0 18px rgba(34,211,238,0.10)',
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => { e.stopPropagation(); fileRef.current?.click(); }}>
-          <Camera size={11} color="#A7B8B4" />
-          <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-        </div>
-      </foreignObject>
+      {isEditable && (
+        <foreignObject x={x + HALF - 20} y={y + HALF - 18} width={24} height={24} style={{ overflow: 'visible' }}>
+          <div title="Upload photo"
+            style={{
+              width: 24, height: 24, border: '1px solid rgba(34,211,238,0.32)', borderRadius: 8,
+              background: '#0F1F1D', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', boxShadow: '0 0 18px rgba(34,211,238,0.10)',
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); fileRef.current?.click(); }}>
+            <Camera size={11} color="#A7B8B4" />
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+          </div>
+        </foreignObject>
+      )}
 
     </motion.g>
   );

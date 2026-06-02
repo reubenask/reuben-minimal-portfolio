@@ -5,9 +5,9 @@ import * as LucideIcons from 'lucide-react';
 import type { GraphNode } from './types';
 
 const ITEM_BG: Record<string, string> = {
-  story:     '#10201F', education: '#0E2523', work:      '#0D2028',
-  research:  '#0C2420', projects:  '#1B1728', social:    '#111F18',
-  profile:   '#181E14',
+  story:     '#183B2A', education: '#0B4A46', work:      '#123A52',
+  research:  '#2F256C', projects:  '#4A3216', social:    '#4A1F31',
+  profile:   '#313C17',
 };
 function itemBg(cat: string) { return ITEM_BG[cat] ?? '#0A1514'; }
 
@@ -25,9 +25,10 @@ interface ItemNodeProps {
   onDragStart: (e: React.MouseEvent) => void;
   onLabelSave: (newLabel: string) => void;
   searchQuery: string;
+  isEditable: boolean;
 }
 
-export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, onLabelSave, searchQuery }: ItemNodeProps) {
+export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, onLabelSave, searchQuery, isEditable }: ItemNodeProps) {
   const weight = node.weight ?? 0.85;
   // Clearly varying sizes: 28–50px radius
   const r    = Math.round(14 + weight * 28);
@@ -48,11 +49,11 @@ export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, 
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.3 }}
       transition={{ duration: 0.35, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ scale: 1.22 }}
-      style={{ cursor: 'grab', transformBox: 'fill-box', transformOrigin: 'center' }}
-      onMouseDown={(e) => { if (!editing) { e.stopPropagation(); onDragStart(e); } }}
+      whileHover={{ scale: 1.24 }}
+      style={{ cursor: isEditable ? 'grab' : 'pointer', transformBox: 'fill-box', transformOrigin: 'center' }}
+      onMouseDown={(e) => { if (!editing) { e.stopPropagation(); if (isEditable) onDragStart(e); } }}
       onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
-      onDoubleClick={(e) => { e.stopPropagation(); setEditing(true); }}
+      onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
     >
       {/* Offset shadow */}
       <circle cx={x + 2} cy={y + 2.5} r={r}

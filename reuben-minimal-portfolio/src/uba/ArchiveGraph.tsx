@@ -20,6 +20,7 @@ interface ArchiveGraphProps {
   onLabelSave: (id: string, newLabel: string) => void;
   onAvatarUpload: (dataUrl: string) => void;
   onAttachFile: (nodeId: string, file: FileAttachment) => void;
+  isEditable: boolean;
 }
 
 const CANVAS_W = 1600;
@@ -33,6 +34,7 @@ export function ArchiveGraph({
   nodePositions, avatarUrl,
   onSelectNode, onToggleFolder, onAddChild,
   onNodeMove, onLabelSave, onAvatarUpload, onAttachFile,
+  isEditable,
 }: ArchiveGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale,  setScale]  = useState(0.82);
@@ -124,6 +126,7 @@ export function ArchiveGraph({
 
   // ── Drag ──────────────────────────────────────────────────────────────
   function startNodeDrag(e: React.MouseEvent, nodeId: string) {
+    if (!isEditable) return;
     const { x, y } = pos(nodeId);
     nodeDragRef.current = { id: nodeId, startMX: e.clientX, startMY: e.clientY, startX: x, startY: y, moved: false };
     e.stopPropagation();
@@ -198,6 +201,7 @@ export function ArchiveGraph({
             onDragStart={(e) => startNodeDrag(e, 'center')}
             onAvatarUpload={onAvatarUpload}
             onAddFolder={() => onAddChild(graph)}
+            isEditable={isEditable}
           />
 
           {folders.map((folder) => {
@@ -214,6 +218,7 @@ export function ArchiveGraph({
                 onDragStart={(e) => startNodeDrag(e, folder.id)}
                 onLabelSave={(label) => onLabelSave(folder.id, label)}
                 onAttachFile={(file) => onAttachFile(folder.id, file)}
+                isEditable={isEditable}
               />
             );
           })}
@@ -235,6 +240,7 @@ export function ArchiveGraph({
                         onClick={() => onSelectNode(item, folder.id)}
                         onDragStart={(e) => startNodeDrag(e, item.id)}
                         onLabelSave={(label) => onLabelSave(item.id, label)}
+                        isEditable={isEditable}
                       />
                     );
                   })
@@ -255,8 +261,7 @@ export function ArchiveGraph({
       }}>
         {[
           '▶ Click folder to expand',
-          '✎ Double-click to rename',
-          '⊹ Drag nodes to reposition',
+          ...(isEditable ? ['✎ Double-click to rename', '⊹ Drag nodes to reposition'] : ['◇ Select any node for details']),
           '◎ Scroll to zoom · Drag to pan',
         ].map((h) => (
           <p key={h} style={{ fontSize: 8, letterSpacing: '0.1em', color: '#766B5B',

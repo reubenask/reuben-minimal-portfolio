@@ -8,6 +8,11 @@ import { useGraph }       from './hooks/useGraph';
 import type { GraphNode } from './types';
 
 export function UbaArchive() {
+  const [isEditorMode] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') === 'edit' || params.get('studio') === 'edit';
+  });
+
   const {
     graph, selected, searchQuery, setSearchQuery,
     toggleFolder, selectNode, clearSelection, addChildNode,
@@ -53,7 +58,9 @@ export function UbaArchive() {
           letterSpacing: '0.34em', color: '#EAFBF8', textTransform: 'uppercase',
           fontFamily: "'IBM Plex Mono', monospace",
         }}>
-          User Behavior Archive <span style={{ color: '#6F8F8A', fontWeight: 400, letterSpacing: '0.14em' }}>· Private Knowledge Graph</span>
+          User Behavior Archive <span style={{ color: '#6F8F8A', fontWeight: 400, letterSpacing: '0.14em' }}>
+            · {isEditorMode ? 'Edit Studio' : 'Public Knowledge Graph'}
+          </span>
         </div>
 
         <div style={{ display: 'flex', gap: 8, marginRight: 52 }}>
@@ -75,10 +82,15 @@ export function UbaArchive() {
 
       {/* ── Main content ──────────────────────────────────────────────────── */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
-        <Sidebar />
+        {isEditorMode && <Sidebar />}
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-          <TopBar searchQuery={searchQuery} onSearch={setSearchQuery} />
+          <TopBar
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
+            isEditorMode={isEditorMode}
+            onNew={() => setAddTarget(graph)}
+          />
 
           <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
             <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
@@ -95,6 +107,7 @@ export function UbaArchive() {
                 onLabelSave={updateNodeLabel}
                 onAvatarUpload={setAvatarUrl}
                 onAttachFile={attachFile}
+                isEditable={isEditorMode}
               />
             </main>
 
@@ -105,6 +118,7 @@ export function UbaArchive() {
               onToggle={() => { if (selected && selected.node.type !== 'item') toggleFolder(selected.node.id); }}
               onLabelSave={updateNodeLabel}
               onAttachFile={attachFile}
+              isEditable={isEditorMode}
             />
           </div>
         </div>
@@ -121,17 +135,20 @@ export function UbaArchive() {
       }}>
         {[
           '7 Primary Folders',
+          isEditorMode ? 'Edit Studio' : 'Public Profile View',
           selected ? `1 Selected: ${selected.node.label}` : 'None Selected',
         ].map((t) => (
           <span key={t} style={{ fontSize: 9, color: '#A7B8B4', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{t}</span>
         ))}
       </div>
 
-      <AddNodeModal
-        parentNode={addTarget}
-        onClose={() => setAddTarget(null)}
-        onAdd={(parentId, newNode) => { addChildNode(parentId, newNode); setAddTarget(null); }}
-      />
+      {isEditorMode && (
+        <AddNodeModal
+          parentNode={addTarget}
+          onClose={() => setAddTarget(null)}
+          onAdd={(parentId, newNode) => { addChildNode(parentId, newNode); setAddTarget(null); }}
+        />
+      )}
     </div>
   );
 }

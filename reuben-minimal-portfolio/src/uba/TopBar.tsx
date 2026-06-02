@@ -1,11 +1,13 @@
-import { Search, Plus, SlidersHorizontal } from 'lucide-react';
+import { Search, Plus, SlidersHorizontal, Eye, LockKeyhole } from 'lucide-react';
 
 interface TopBarProps {
   searchQuery: string;
   onSearch: (q: string) => void;
+  isEditorMode: boolean;
+  onNew: () => void;
 }
 
-export function TopBar({ searchQuery, onSearch }: TopBarProps) {
+export function TopBar({ searchQuery, onSearch, isEditorMode, onNew }: TopBarProps) {
   return (
     <div style={{
       height: 58,
@@ -49,58 +51,74 @@ export function TopBar({ searchQuery, onSearch }: TopBarProps) {
 
       <div style={{ flex: 1 }} />
 
-      {/* New button */}
-      <button style={{
-        display: 'flex', alignItems: 'center', gap: 5,
-        padding: '9px 13px',
-        border: '1px solid rgba(34,211,238,0.26)',
-        borderRadius: 999,
-        background: 'rgba(34,211,238,0.09)',
-        cursor: 'pointer',
-        fontSize: 9, fontWeight: 600, letterSpacing: '0.15em',
-        textTransform: 'uppercase',
-        color: '#EAFBF8',
-        fontFamily: "'IBM Plex Mono', monospace",
-        boxShadow: '0 0 24px rgba(34,211,238,0.08)',
-      }}>
-        <Plus size={10} strokeWidth={2.5} />
-        New
-        <span style={{
-          marginLeft: 3,
-          background: 'rgba(214,168,79,0.18)',
-          border: '1px solid rgba(214,168,79,0.25)',
+      {isEditorMode ? (
+        <>
+          <button onClick={onNew} style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            padding: '9px 13px',
+            border: '1px solid rgba(34,211,238,0.26)',
+            borderRadius: 999,
+            background: 'rgba(34,211,238,0.09)',
+            cursor: 'pointer',
+            fontSize: 9, fontWeight: 600, letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#EAFBF8',
+            fontFamily: "'IBM Plex Mono', monospace",
+            boxShadow: '0 0 24px rgba(34,211,238,0.08)',
+          }}>
+            <Plus size={10} strokeWidth={2.5} />
+            New
+            <span style={{
+              marginLeft: 3,
+              background: 'rgba(214,168,79,0.18)',
+              border: '1px solid rgba(214,168,79,0.25)',
+              borderRadius: 999,
+              padding: '0 4px',
+              fontSize: 8, color: '#F3D28B',
+            }}>▼</span>
+          </button>
+
+          <button style={{
+            width: 28, height: 28,
+            border: '1px solid rgba(148,163,184,0.16)',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.045)',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#A7B8B4',
+            boxShadow: '0 12px 30px rgba(0,0,0,0.14)',
+          }}>
+            <SlidersHorizontal size={12} />
+          </button>
+
+          <div title="Edit studio" style={{
+            width: 28, height: 28,
+            border: '1px solid rgba(34,211,238,0.35)',
+            borderRadius: 12,
+            background: 'linear-gradient(135deg, #0F766E, #155E75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#EAFBF8',
+            boxShadow: '0 0 24px rgba(34,211,238,0.12)',
+          }}><LockKeyhole size={12} /></div>
+        </>
+      ) : (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '8px 12px',
+          border: '1px solid rgba(15,118,110,0.24)',
           borderRadius: 999,
-          padding: '0 4px',
-          fontSize: 8, color: '#F3D28B',
-        }}>▼</span>
-      </button>
-
-      <button style={{
-        width: 28, height: 28,
-        border: '1px solid rgba(148,163,184,0.16)',
-        borderRadius: 12,
-        background: 'rgba(255,255,255,0.045)',
-        cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: '#A7B8B4',
-        boxShadow: '0 12px 30px rgba(0,0,0,0.14)',
-      }}>
-        <SlidersHorizontal size={12} />
-      </button>
-
-      {/* User avatar */}
-      <div style={{
-        width: 28, height: 28,
-        border: '1px solid rgba(34,211,238,0.35)',
-        borderRadius: 12,
-        background: 'linear-gradient(135deg, #0F766E, #155E75)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 10, fontWeight: 700,
-        color: '#EAFBF8',
-        fontFamily: "'IBM Plex Mono', monospace",
-        boxShadow: '0 0 24px rgba(34,211,238,0.12)',
-        cursor: 'pointer',
-      }}>U.</div>
+          background: 'rgba(244,233,212,0.08)',
+          color: '#D8C9A7',
+          fontSize: 8.5,
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          fontFamily: "'IBM Plex Mono', monospace",
+        }}>
+          <Eye size={12} />
+          Public Profile
+        </div>
+      )}
     </div>
   );
 }

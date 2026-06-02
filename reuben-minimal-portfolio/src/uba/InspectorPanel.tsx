@@ -7,8 +7,8 @@ import type { SelectedNode, FileAttachment } from './types';
 
 // Folder bg per category — matches FolderNode
 const FOLDER_BG: Record<string, string> = {
-  story: '#4F7C6B', education: '#0F766E', work: '#25636B',
-  research: '#115E59', projects: '#7C6E34', social: '#3E7563', profile: '#5F6F46',
+  story: '#5E8B6E', education: '#0F8F88', work: '#2A6F97',
+  research: '#6D5BD0', projects: '#B47A32', social: '#B85C7A', profile: '#6B7D3A',
 };
 function folderBg(cat: string) { return FOLDER_BG[cat] ?? '#0F766E'; }
 
@@ -26,9 +26,10 @@ interface InspectorPanelProps {
   onToggle: () => void;
   onLabelSave: (id: string, newLabel: string) => void;
   onAttachFile: (nodeId: string, file: FileAttachment) => void;
+  isEditable: boolean;
 }
 
-export function InspectorPanel({ selected, onClose, onAddChild, onToggle, onLabelSave, onAttachFile }: InspectorPanelProps) {
+export function InspectorPanel({ selected, onClose, onAddChild, onToggle, onLabelSave, onAttachFile, isEditable }: InspectorPanelProps) {
   const [activeTab, setActiveTab] = useState('Overview');
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +80,7 @@ export function InspectorPanel({ selected, onClose, onAddChild, onToggle, onLabe
           </div>
 
           {/* Folder preview + title */}
-          <FolderPreview selected={selected} onLabelSave={onLabelSave} />
+          <FolderPreview selected={selected} onLabelSave={onLabelSave} isEditable={isEditable} />
 
           {/* Tabs */}
           <div style={{
@@ -102,7 +103,7 @@ export function InspectorPanel({ selected, onClose, onAddChild, onToggle, onLabe
 
           {/* Tab content */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
-            {activeTab === 'Overview' && <OverviewTab selected={selected} />}
+            {activeTab === 'Overview' && <OverviewTab selected={selected} isEditable={isEditable} />}
             {activeTab === 'Contents' && <ContentsTab selected={selected} />}
             {activeTab === 'Connections' && (
               <p style={{ fontSize: 9, color: '#6F8F8A', letterSpacing: '0.1em' }}>
@@ -117,42 +118,44 @@ export function InspectorPanel({ selected, onClose, onAddChild, onToggle, onLabe
           </div>
 
           {/* Action buttons */}
-          <div style={{ borderTop: '1.5px solid rgba(148,163,184,0.22)', padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <VintageButton label="Open Collection" primary onClick={() => {}} />
-            <div style={{ display: 'flex', gap: 6 }}>
-              <VintageButton label="Add Node" onClick={onAddChild} icon={<Plus size={10} />} />
-              <VintageButton
-                label={selected.node.collapsed ? 'Expand' : 'Collapse'}
-                onClick={onToggle}
-                icon={selected.node.collapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
-              />
-            </div>
-            {/* Attach files — only shown for folders */}
-            {selected.node.type !== 'center' && (
-              <>
+          {isEditable && (
+            <div style={{ borderTop: '1.5px solid rgba(148,163,184,0.22)', padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <VintageButton label="Open Collection" primary onClick={() => {}} />
+              <div style={{ display: 'flex', gap: 6 }}>
+                <VintageButton label="Add Node" onClick={onAddChild} icon={<Plus size={10} />} />
                 <VintageButton
-                  label={`Attach File${(selected.node.files?.length ?? 0) > 0 ? ` · ${selected.node.files!.length} attached` : ''}`}
-                  onClick={() => fileRef.current?.click()}
-                  icon={<Paperclip size={10} />}
+                  label={selected.node.collapsed ? 'Expand' : 'Collapse'}
+                  onClick={onToggle}
+                  icon={selected.node.collapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
                 />
-                <input
-                  ref={fileRef}
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.csv"
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
-              </>
-            )}
-          </div>
+              </div>
+              {/* Attach files — only shown for folders */}
+              {selected.node.type !== 'center' && (
+                <>
+                  <VintageButton
+                    label={`Attach File${(selected.node.files?.length ?? 0) > 0 ? ` · ${selected.node.files!.length} attached` : ''}`}
+                    onClick={() => fileRef.current?.click()}
+                    icon={<Paperclip size={10} />}
+                  />
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.csv"
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                </>
+              )}
+            </div>
+          )}
         </motion.aside>
       )}
     </AnimatePresence>
   );
 }
 
-function FolderPreview({ selected, onLabelSave }: { selected: SelectedNode; onLabelSave: (id: string, l: string) => void }) {
+function FolderPreview({ selected, onLabelSave, isEditable }: { selected: SelectedNode; onLabelSave: (id: string, l: string) => void; isEditable: boolean }) {
   const { node } = selected;
   const bg   = folderBg(node.category);
   const Icon = getIcon(node.icon);
@@ -220,11 +223,13 @@ function FolderPreview({ selected, onLabelSave }: { selected: SelectedNode; onLa
               fontFamily: "'IBM Plex Mono', monospace", display: 'block' }}>
               {node.label}
             </span>
-            <button onClick={() => setEditing(true)} title="Rename"
-              style={{ background: 'none', border: 'none', cursor: 'pointer',
-                color: '#6F8F8A', padding: 0, lineHeight: 1 }}>
-              <Pencil size={10} />
-            </button>
+            {isEditable && (
+              <button onClick={() => setEditing(true)} title="Rename"
+                style={{ background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#6F8F8A', padding: 0, lineHeight: 1 }}>
+                <Pencil size={10} />
+              </button>
+            )}
           </div>
         )}
 
@@ -236,7 +241,7 @@ function FolderPreview({ selected, onLabelSave }: { selected: SelectedNode; onLa
   );
 }
 
-function OverviewTab({ selected }: { selected: SelectedNode }) {
+function OverviewTab({ selected, isEditable }: { selected: SelectedNode; isEditable: boolean }) {
   const { node } = selected;
   const bg = folderBg(node.category);
   return (
@@ -263,7 +268,7 @@ function OverviewTab({ selected }: { selected: SelectedNode }) {
           { label: 'Items',       value: String(node.children?.filter(c => c.type === 'item').length ?? (node.children?.length ?? 0)) },
           { label: 'Time Span',   value: '—' },
           { label: 'Last Updated', value: 'May 2026' },
-          { label: 'Visibility',  value: 'Private' },
+          { label: 'Visibility',  value: isEditable ? 'Private Studio' : 'Public Profile' },
         ].map(({ label, value }, i, arr) => (
           <div key={label} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',

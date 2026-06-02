@@ -5,8 +5,8 @@ import * as LucideIcons from 'lucide-react';
 import type { GraphNode, FileAttachment } from './types';
 
 const FOLDER_BG: Record<string, string> = {
-  story: '#4F7C6B', education: '#0F766E', work: '#25636B',
-  research: '#115E59', projects: '#7C6E34', social: '#3E7563', profile: '#5F6F46',
+  story: '#5E8B6E', education: '#0F8F88', work: '#2A6F97',
+  research: '#6D5BD0', projects: '#B47A32', social: '#B85C7A', profile: '#6B7D3A',
 };
 function folderBg(cat: string) { return FOLDER_BG[cat] ?? '#0F766E'; }
 
@@ -29,9 +29,10 @@ interface FolderNodeProps {
   onLabelSave: (newLabel: string) => void;
   onAttachFile: (file: FileAttachment) => void;
   searchQuery: string;
+  isEditable: boolean;
 }
 
-export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLabelSave, onAttachFile, searchQuery }: FolderNodeProps) {
+export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLabelSave, onAttachFile, searchQuery, isEditable }: FolderNodeProps) {
   const weight = node.weight ?? 1.6;
   const { w, h } = folderDims(weight);
   const halfW = w / 2, halfH = h / 2;
@@ -71,16 +72,16 @@ export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLab
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       // Hover magnifier: scale up from the node's own center
-      whileHover={{ scale: 1.13 }}
-      style={{ cursor: 'grab', transformBox: 'fill-box', transformOrigin: 'center' }}
+      whileHover={{ scale: 1.22, filter: 'drop-shadow(0 24px 34px rgba(0,0,0,0.24))' }}
+      style={{ cursor: isEditable ? 'grab' : 'pointer', transformBox: 'fill-box', transformOrigin: 'center' }}
     >
       <foreignObject
         x={x - halfW} y={y - halfH - 12}
         width={w + 8} height={h + 36}
         style={{ overflow: 'visible' }}
-        onMouseDown={(e) => { e.stopPropagation(); onDragStart(e as unknown as React.MouseEvent); }}
+        onMouseDown={(e) => { e.stopPropagation(); if (isEditable) onDragStart(e as unknown as React.MouseEvent); }}
         onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
-        onDoubleClick={(e) => { e.stopPropagation(); setEditing(true); }}
+        onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
       >
         <div style={{ position: 'relative', userSelect: 'none', width: `${w}px` }}>
           {/* Tab */}
@@ -133,10 +134,13 @@ export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLab
               />
             ) : (
               <span style={{
-                fontSize: Math.round(8 + weight * 0.6), fontWeight: 700,
-                letterSpacing: '0.18em', textTransform: 'uppercase',
+                fontSize: Math.round(9 + weight * 0.8), fontWeight: 800,
+                letterSpacing: '0.14em', textTransform: 'uppercase',
                 color: '#EAFBF8', fontFamily: "'IBM Plex Mono', monospace",
                 textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.35)',
+                lineHeight: 1.1,
+                maxWidth: w - 18,
+                overflowWrap: 'anywhere',
               }}>{node.label}</span>
             )}
 

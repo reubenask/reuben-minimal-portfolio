@@ -152,7 +152,12 @@ export function ArchiveGraph({
   function onMouseUp() { nodeDragRef.current = null; panRef.current = null; }
 
   const folders = graph.children ?? [];
-  const mergedPositions = { ...defaultPositions, ...nodePositions };
+  const resolvedPositions: Record<string, { x: number; y: number }> = {};
+  const collectResolvedPositions = (node: GraphNode) => {
+    resolvedPositions[node.id] = pos(node.id);
+    node.children?.forEach(collectResolvedPositions);
+  };
+  collectResolvedPositions(graph);
 
   return (
     <div
@@ -182,7 +187,7 @@ export function ArchiveGraph({
       }}>
         <svg width={CANVAS_W} height={CANVAS_H} style={{ display: 'block', overflow: 'visible' }}>
 
-          <GraphConnectors root={graph} positions={mergedPositions} centerX={CX} centerY={CY} />
+          <GraphConnectors root={graph} positions={resolvedPositions} centerX={CX} centerY={CY} />
 
           <CenterNode
             node={graph}

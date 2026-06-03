@@ -100,6 +100,14 @@ export function ArchiveGraph({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver(() => fitToView());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fitToView]);
+
   // Re-fit when a folder opens/closes
   const openFolderId = useMemo(
     () => (graph.children ?? []).find(f => !f.collapsed)?.id ?? null,
@@ -125,18 +133,20 @@ export function ArchiveGraph({
   }, [handleWheel]);
 
   // ── Drag ──────────────────────────────────────────────────────────────
-  function startNodeDrag(e: React.MouseEvent, nodeId: string) {
+  function startNodeDrag(e: React.PointerEvent, nodeId: string) {
     const { x, y } = pos(nodeId);
     nodeDragRef.current = { id: nodeId, startMX: e.clientX, startMY: e.clientY, startX: x, startY: y, moved: false };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
     e.stopPropagation();
   }
 
-  function onCanvasMouseDown(e: React.MouseEvent) {
+  function onCanvasPointerDown(e: React.PointerEvent) {
     if (nodeDragRef.current) return;
     panRef.current = { startMX: e.clientX, startMY: e.clientY, startOX: offset.x, startOY: offset.y };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
   }
 
-  function onMouseMove(e: React.MouseEvent) {
+  function onPointerMove(e: React.PointerEvent) {
     if (nodeDragRef.current) {
       const d = nodeDragRef.current;
       const dx = (e.clientX - d.startMX) / scale;
@@ -151,7 +161,13 @@ export function ArchiveGraph({
     }
   }
 
-  function onMouseUp() { nodeDragRef.current = null; panRef.current = null; }
+  function onPointerUp(e: React.PointerEvent) {
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    nodeDragRef.current = null;
+    panRef.current = null;
+  }
 
   const folders = graph.children ?? [];
   const resolvedPositions: Record<string, { x: number; y: number }> = {};
@@ -167,6 +183,7 @@ export function ArchiveGraph({
       style={{
         position: 'relative', width: '100%', height: '100%',
         overflow: 'hidden', cursor: 'grab', userSelect: 'none',
+        touchAction: 'none',
         background: `
           radial-gradient(circle at 50% 43%, rgba(15,118,110,0.13), transparent 33%),
           radial-gradient(circle at 74% 64%, rgba(184,134,64,0.16), transparent 30%),
@@ -174,10 +191,11 @@ export function ArchiveGraph({
         `,
         backgroundSize: 'auto, auto, auto',
       }}
-      onMouseDown={onCanvasMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp}
+      onPointerDown={onCanvasPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onPointerLeave={onPointerUp}
     >
       <div style={{
         position: 'absolute', left: '50%', top: '50%',

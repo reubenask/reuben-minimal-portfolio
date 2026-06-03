@@ -9,7 +9,7 @@ interface CenterNodeProps {
   isSelected: boolean;
   avatarUrl: string;
   onClick: () => void;
-  onDragStart: (e: React.MouseEvent) => void;
+  onDragStart: (e: React.PointerEvent) => void;
   onAvatarUpload: (dataUrl: string) => void;
   onAddFolder?: () => void;
   isEditable: boolean;
@@ -34,7 +34,7 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       style={{ cursor: 'grab', transformOrigin: `${x}px ${y}px` }}
-      onMouseDown={onDragStart}
+      onPointerDown={onDragStart}
       onClick={onClick}
     >
       {/* Orbit rings */}

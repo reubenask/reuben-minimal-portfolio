@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/static-components */
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 import { ArrowUpRight, Image, Layers, Link2, Sparkles, X } from 'lucide-react';
@@ -30,31 +31,42 @@ interface PublicDetailPanelProps {
 }
 
 export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps) {
+  const [isCompact, setIsCompact] = useState(false);
   const node = selected?.node;
   const accent = node ? accentFor(node.category) : '#0F766E';
   const Icon = node ? getIcon(node.icon) : LucideIcons.Circle;
   const childCount = node?.children?.length ?? 0;
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 720px)');
+    const update = () => setIsCompact(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   return (
     <AnimatePresence>
       {node && (
         <motion.aside
           key={node.id}
-          initial={{ x: 28, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 28, opacity: 0 }}
+          initial={isCompact ? { y: 28, opacity: 0 } : { x: 28, opacity: 0 }}
+          animate={isCompact ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
+          exit={isCompact ? { y: 28, opacity: 0 } : { x: 28, opacity: 0 }}
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'absolute',
-            top: 22,
-            right: 22,
-            width: 340,
-            maxWidth: 'calc(100vw - 44px)',
-            maxHeight: 'calc(100vh - 96px)',
+            top: isCompact ? 'auto' : 22,
+            right: isCompact ? 10 : 22,
+            bottom: isCompact ? 10 : 'auto',
+            left: isCompact ? 10 : 'auto',
+            width: isCompact ? 'auto' : 340,
+            maxWidth: isCompact ? 'none' : 'calc(100vw - 44px)',
+            maxHeight: isCompact ? '42vh' : 'calc(100vh - 96px)',
             overflow: 'hidden',
             zIndex: 30,
             border: '1px solid rgba(79,65,42,0.16)',
-            borderRadius: 24,
+            borderRadius: isCompact ? 22 : 24,
             background: 'rgba(255,250,241,0.88)',
             boxShadow: '0 32px 90px rgba(86,64,34,0.24)',
             backdropFilter: 'blur(24px)',
@@ -63,7 +75,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
           }}
         >
           <div style={{
-            padding: 16,
+            padding: isCompact ? 12 : 16,
             display: 'flex',
             alignItems: 'flex-start',
             gap: 12,
@@ -71,9 +83,9 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             background: `linear-gradient(135deg, ${accent}22, rgba(255,250,241,0.72))`,
           }}>
             <div style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
+              width: isCompact ? 40 : 48,
+              height: isCompact ? 40 : 48,
+              borderRadius: isCompact ? 14 : 16,
               background: `linear-gradient(145deg, ${accent}, rgba(7,18,17,0.86))`,
               display: 'flex',
               alignItems: 'center',
@@ -99,7 +111,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               <h2 style={{
                 margin: 0,
                 color: '#17251F',
-                fontSize: 18,
+                fontSize: isCompact ? 15 : 18,
                 lineHeight: 1.12,
                 letterSpacing: 0,
                 fontFamily: "'IBM Plex Mono', monospace",
@@ -132,7 +144,14 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             </button>
           </div>
 
-          <div style={{ maxHeight: 'calc(100vh - 230px)', overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{
+            maxHeight: isCompact ? 'calc(42vh - 98px)' : 'calc(100vh - 230px)',
+            overflowY: 'auto',
+            padding: isCompact ? 12 : 16,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: isCompact ? 9 : 12,
+          }}>
             <SectionTitle icon={<Sparkles size={12} />} label="Overview" />
             <p style={{
               margin: 0,

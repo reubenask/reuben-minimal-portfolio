@@ -25,7 +25,7 @@ interface FolderNodeProps {
   isSelected: boolean;
   onClick: () => void;
   onAdd?: () => void;
-  onDragStart: (e: React.MouseEvent) => void;
+  onDragStart: (e: React.PointerEvent) => void;
   onLabelSave: (newLabel: string) => void;
   onAttachFile: (file: FileAttachment) => void;
   searchQuery: string;
@@ -79,7 +79,7 @@ export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLab
         x={x - halfW} y={y - halfH - 12}
         width={w + 8} height={h + 36}
         style={{ overflow: 'visible' }}
-        onMouseDown={(e) => { e.stopPropagation(); onDragStart(e as unknown as React.MouseEvent); }}
+        onPointerDown={(e) => { e.stopPropagation(); onDragStart(e); }}
         onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
         onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
       >

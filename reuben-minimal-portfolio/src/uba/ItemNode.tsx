@@ -22,7 +22,7 @@ interface ItemNodeProps {
   index: number;
   isSelected: boolean;
   onClick: () => void;
-  onDragStart: (e: React.MouseEvent) => void;
+  onDragStart: (e: React.PointerEvent) => void;
   onLabelSave: (newLabel: string) => void;
   searchQuery: string;
   isEditable: boolean;
@@ -51,7 +51,7 @@ export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, 
       transition={{ duration: 0.35, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ scale: 1.24 }}
       style={{ cursor: 'grab', transformBox: 'fill-box', transformOrigin: 'center' }}
-      onMouseDown={(e) => { if (!editing) { e.stopPropagation(); onDragStart(e); } }}
+      onPointerDown={(e) => { if (!editing) { e.stopPropagation(); onDragStart(e); } }}
       onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
       onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
     >

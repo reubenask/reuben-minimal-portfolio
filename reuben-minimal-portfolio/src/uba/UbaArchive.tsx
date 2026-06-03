@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LockKeyhole, LogOut, UserRound } from 'lucide-react';
 import { Sidebar }        from './Sidebar';
 import { TopBar }         from './TopBar';
@@ -13,6 +13,7 @@ const MEMBER_SESSION_KEY = 'uba_member_session';
 const MEMBER_CODE = import.meta.env.VITE_UBA_MEMBER_CODE ?? 'UBA2026';
 
 export function UbaArchive() {
+  const [isCompact, setIsCompact] = useState(false);
   const [isMember, setIsMember] = useState(() => localStorage.getItem(MEMBER_SESSION_KEY) === 'active');
   const [isLoginOpen, setIsLoginOpen] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -30,6 +31,14 @@ export function UbaArchive() {
   } = useGraph();
 
   const [addTarget, setAddTarget] = useState<GraphNode | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 640px)');
+    const update = () => setIsCompact(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   function handleLogin(code: string) {
     if (code.trim() !== MEMBER_CODE) return false;
@@ -57,17 +66,17 @@ export function UbaArchive() {
     }}>
 
       <div style={{
-        height: 52,
+        height: isCompact ? 48 : 52,
         background: 'rgba(4, 12, 11, 0.82)',
         borderBottom: '1px solid rgba(148,163,184,0.16)',
         display: 'flex', alignItems: 'center',
-        padding: '0 18px',
+        padding: isCompact ? '0 12px' : '0 18px',
         flexShrink: 0,
-        gap: 14,
+        gap: isCompact ? 10 : 14,
         backdropFilter: 'blur(18px)',
       }}>
         <div style={{
-          width: 38, height: 30,
+          width: isCompact ? 34 : 38, height: isCompact ? 28 : 30,
           border: '1px solid rgba(34,211,238,0.36)',
           borderRadius: 12,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -78,8 +87,10 @@ export function UbaArchive() {
         }}>UBA</div>
 
         <div style={{ flex: 1, textAlign: 'left', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.34em', color: '#EAFBF8', textTransform: 'uppercase',
+          letterSpacing: isCompact ? '0.18em' : '0.34em', color: '#EAFBF8', textTransform: 'uppercase',
           fontFamily: "'IBM Plex Mono', monospace",
+          lineHeight: 1.25,
+          minWidth: 0,
         }}>
           User Behavior Archive
           {isEditorMode && (
@@ -87,13 +98,13 @@ export function UbaArchive() {
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 52 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: isCompact ? 42 : 52 }}>
           {['●', '●', '●'].map((c, i) => (
             <div key={i} style={{
               width: 9, height: 9,
               border: '1px solid rgba(255,255,255,0.16)',
               borderRadius: '999px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              display: isCompact ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 0,
               cursor: 'default',
               background: i === 0 ? '#D6A84F' : i === 1 ? '#22D3EE' : '#2DD4BF',

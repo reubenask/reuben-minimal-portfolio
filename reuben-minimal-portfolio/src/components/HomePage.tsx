@@ -1,13 +1,44 @@
-import { Menu } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const heroImage = new URL("../../assets/hero.png", import.meta.url).href;
+const architectFrontImage = new URL("../../assets/hero-gallery-architect-front.png", import.meta.url).href;
+const architectProfileImage = new URL("../../assets/hero-gallery-architect-profile.png", import.meta.url).href;
+const storyboardImage = new URL("../../assets/hero-gallery-storyboard.png", import.meta.url).href;
+
+const gallerySlides = [
+  { src: heroImage, alt: "Human Behavior Architect visual" },
+  { src: architectFrontImage, alt: "User Behavior Architect portrait interface" },
+  { src: architectProfileImage, alt: "User Behavior Architect profile interface" },
+  { src: storyboardImage, alt: "User Behavior Architect storyboard gallery" },
+];
 
 type HomePageProps = {
   onOpenArchive: () => void;
 };
 
 export function HomePage({ onOpenArchive }: HomePageProps) {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const slide = gallerySlides[activeSlide];
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % gallerySlides.length);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  function showPrevious(e: React.MouseEvent) {
+    e.stopPropagation();
+    setActiveSlide((current) => (current - 1 + gallerySlides.length) % gallerySlides.length);
+  }
+
+  function showNext(e: React.MouseEvent) {
+    e.stopPropagation();
+    setActiveSlide((current) => (current + 1) % gallerySlides.length);
+  }
+
   return (
     <main className="relative grid min-h-screen place-items-center overflow-hidden bg-[#030706] px-6 py-24 text-slate-100 [perspective:1800px]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_39%,rgba(75,220,214,.17),transparent_24%),radial-gradient(circle_at_68%_66%,rgba(236,176,88,.13),transparent_25%),linear-gradient(140deg,#030706_0%,#081313_46%,#020506_100%)]" />
@@ -32,9 +63,16 @@ export function HomePage({ onOpenArchive }: HomePageProps) {
         </button>
       </header>
 
-      <motion.button
-        type="button"
+      <motion.div
+        role="button"
+        tabIndex={0}
         onClick={onOpenArchive}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onOpenArchive();
+          }
+        }}
         initial={{ opacity: 0, y: 30, rotateX: 14, rotateY: -13, scale: 0.78 }}
         animate={{ opacity: 1, y: -8, rotateX: 9, rotateY: -11, scale: 0.82 }}
         transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
@@ -43,12 +81,53 @@ export function HomePage({ onOpenArchive }: HomePageProps) {
         aria-label="Open archive"
       >
         <span className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(110deg,rgba(255,255,255,.12),transparent_26%,transparent_70%,rgba(255,255,255,.08))]" />
-        <img
-          src={heroImage}
-          alt="Human Behavior Architect visual"
-          className="max-h-[62svh] w-full object-contain opacity-88"
-        />
-      </motion.button>
+        <div className="relative aspect-[16/9] w-full">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              initial={{ opacity: 0, scale: 1.025 }}
+              animate={{ opacity: 0.88, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.985 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+          </AnimatePresence>
+        </div>
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-2 backdrop-blur-xl">
+          <button
+            type="button"
+            onClick={showPrevious}
+            className="grid h-6 w-6 place-items-center rounded-full text-slate-300 transition hover:bg-white/10 hover:text-cyan-100"
+            aria-label="Previous gallery image"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+          {gallerySlides.map((item, index) => (
+            <button
+              key={item.src}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveSlide(index);
+              }}
+              className={`h-1.5 rounded-full transition-all ${
+                index === activeSlide ? "w-7 bg-cyan-200" : "w-1.5 bg-white/35 hover:bg-white/60"
+              }`}
+              aria-label={`Show gallery image ${index + 1}`}
+            />
+          ))}
+          <button
+            type="button"
+            onClick={showNext}
+            className="grid h-6 w-6 place-items-center rounded-full text-slate-300 transition hover:bg-white/10 hover:text-cyan-100"
+            aria-label="Next gallery image"
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </motion.div>
     </main>
   );
 }

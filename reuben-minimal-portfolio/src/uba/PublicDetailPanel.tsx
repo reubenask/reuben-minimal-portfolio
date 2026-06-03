@@ -36,6 +36,9 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
   const accent = node ? accentFor(node.category) : '#0F766E';
   const Icon = node ? getIcon(node.icon) : LucideIcons.Circle;
   const childCount = node?.children?.length ?? 0;
+  const panelSize = isCompact
+    ? { left: 10, right: 10, bottom: 10, width: 'auto', height: 'min(48vh, 360px)' }
+    : { left: 'auto', right: 22, bottom: 22, width: 340, height: 340 };
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 720px)');
@@ -50,42 +53,46 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
       {node && (
         <motion.aside
           key={node.id}
-          initial={isCompact ? { y: 28, opacity: 0 } : { x: 28, opacity: 0 }}
-          animate={isCompact ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
-          exit={isCompact ? { y: 28, opacity: 0 } : { x: 28, opacity: 0 }}
+          initial={{ y: 28, opacity: 0, scale: 0.98 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 28, opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'absolute',
-            top: isCompact ? 'auto' : 22,
-            right: isCompact ? 10 : 22,
-            bottom: isCompact ? 10 : 'auto',
-            left: isCompact ? 10 : 'auto',
-            width: isCompact ? 'auto' : 340,
+            top: 'auto',
+            right: panelSize.right,
+            bottom: panelSize.bottom,
+            left: panelSize.left,
+            width: panelSize.width,
+            height: panelSize.height,
             maxWidth: isCompact ? 'none' : 'calc(100vw - 44px)',
-            maxHeight: isCompact ? '42vh' : 'calc(100vh - 96px)',
+            maxHeight: 'calc(100vh - 82px)',
             overflow: 'hidden',
             zIndex: 30,
             border: '1px solid rgba(79,65,42,0.16)',
-            borderRadius: isCompact ? 22 : 24,
+            borderRadius: 24,
             background: 'rgba(255,250,241,0.88)',
             boxShadow: '0 32px 90px rgba(86,64,34,0.24)',
             backdropFilter: 'blur(24px)',
             fontFamily: "'IBM Plex Mono', monospace",
             color: '#20302B',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <div style={{
-            padding: isCompact ? 12 : 16,
+            padding: isCompact ? 11 : 13,
             display: 'flex',
             alignItems: 'flex-start',
-            gap: 12,
+            gap: 10,
             borderBottom: '1px solid rgba(79,65,42,0.12)',
             background: `linear-gradient(135deg, ${accent}22, rgba(255,250,241,0.72))`,
+            flexShrink: 0,
           }}>
             <div style={{
-              width: isCompact ? 40 : 48,
-              height: isCompact ? 40 : 48,
-              borderRadius: isCompact ? 14 : 16,
+              width: isCompact ? 38 : 42,
+              height: isCompact ? 38 : 42,
+              borderRadius: 14,
               background: `linear-gradient(145deg, ${accent}, rgba(7,18,17,0.86))`,
               display: 'flex',
               alignItems: 'center',
@@ -99,7 +106,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
-                fontSize: 8,
+                fontSize: 7.5,
                 color: accent,
                 fontWeight: 900,
                 letterSpacing: '0.2em',
@@ -111,14 +118,14 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               <h2 style={{
                 margin: 0,
                 color: '#17251F',
-                fontSize: isCompact ? 15 : 18,
+                fontSize: isCompact ? 14 : 17,
                 lineHeight: 1.12,
                 letterSpacing: 0,
                 fontFamily: "'IBM Plex Mono', monospace",
               }}>
                 {node.label}
               </h2>
-              <div style={{ marginTop: 6, fontSize: 8.5, color: '#746850', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              <div style={{ marginTop: 5, fontSize: 7.5, color: '#746850', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                 {node.category} · {childCount} linked {childCount === 1 ? 'node' : 'nodes'}
               </div>
             </div>
@@ -127,8 +134,8 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               onClick={onClose}
               aria-label="Close details"
               style={{
-                width: 30,
-                height: 30,
+                width: 28,
+                height: 28,
                 border: '1px solid rgba(79,65,42,0.15)',
                 borderRadius: 999,
                 background: 'rgba(255,255,255,0.58)',
@@ -145,9 +152,10 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
           </div>
 
           <div style={{
-            maxHeight: isCompact ? 'calc(42vh - 98px)' : 'calc(100vh - 230px)',
+            flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
-            padding: isCompact ? 12 : 16,
+            padding: isCompact ? 11 : 13,
             display: 'flex',
             flexDirection: 'column',
             gap: isCompact ? 9 : 12,
@@ -160,8 +168,8 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               background: 'rgba(255,255,255,0.54)',
               border: '1px solid rgba(79,65,42,0.10)',
               color: '#34443D',
-              fontSize: 11,
-              lineHeight: 1.65,
+              fontSize: 10,
+              lineHeight: 1.55,
               fontFamily: "'IBM Plex Mono', monospace",
             }}>
               {node.description || 'A focused archive entry will be added here with the story, context, methods, and outcomes.'}

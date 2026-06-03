@@ -171,11 +171,9 @@ export function ArchiveGraph({
         background: `
           radial-gradient(circle at 50% 43%, rgba(15,118,110,0.13), transparent 33%),
           radial-gradient(circle at 74% 64%, rgba(184,134,64,0.16), transparent 30%),
-          linear-gradient(rgba(53,66,57,0.075) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(53,66,57,0.075) 1px, transparent 1px),
           #F4E9D4
         `,
-        backgroundSize: 'auto, auto, 44px 44px, 44px 44px, auto',
+        backgroundSize: 'auto, auto, auto',
       }}
       onMouseDown={onCanvasMouseDown}
       onMouseMove={onMouseMove}

@@ -5,6 +5,7 @@ import { TopBar }         from './TopBar';
 import { ArchiveGraph }   from './ArchiveGraph';
 import { InspectorPanel } from './InspectorPanel';
 import { AddNodeModal }   from './AddNodeModal';
+import { PublicDetailPanel } from './PublicDetailPanel';
 import { useGraph }       from './hooks/useGraph';
 import type { GraphNode } from './types';
 
@@ -182,6 +183,9 @@ export function UbaArchive() {
                 onAttachFile={attachFile}
                 isEditable={isEditorMode}
               />
+            )}
+            {!isEditorMode && (
+              <PublicDetailPanel selected={selected} onClose={clearSelection} />
             )}
           </div>
         </div>

@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/static-components */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
-import { ArrowUpRight, Image, Layers, Link2, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, Image, Layers, Link2, Maximize2, Sparkles, X } from 'lucide-react';
 import type { SelectedNode } from './types';
 
 const CATEGORY_ACCENT: Record<string, string> = {
@@ -30,15 +30,71 @@ interface PublicDetailPanelProps {
   onClose: () => void;
 }
 
+type PanelFrame = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type PanelInteraction =
+  | { mode: 'move'; startX: number; startY: number; frame: PanelFrame }
+  | { mode: 'resize'; startX: number; startY: number; frame: PanelFrame };
+
+const PANEL_FRAME_KEY = 'uba_public_detail_panel_frame';
+const PANEL_MIN_WIDTH = 280;
+const PANEL_MIN_HEIGHT = 260;
+const PANEL_MARGIN = 14;
+const PANEL_TOP_MARGIN = 64;
+
+function defaultPanelFrame(): PanelFrame {
+  if (typeof window === 'undefined') return { x: 900, y: 780, width: 340, height: 340 };
+  return {
+    x: Math.max(PANEL_MARGIN, window.innerWidth - 340 - 22),
+    y: Math.max(PANEL_TOP_MARGIN, window.innerHeight - 340 - 22),
+    width: 340,
+    height: 340,
+  };
+}
+
+function clampPanelFrame(frame: PanelFrame): PanelFrame {
+  if (typeof window === 'undefined') return frame;
+  const maxWidth = Math.max(PANEL_MIN_WIDTH, window.innerWidth - PANEL_MARGIN * 2);
+  const maxHeight = Math.max(PANEL_MIN_HEIGHT, window.innerHeight - PANEL_TOP_MARGIN - PANEL_MARGIN);
+  const width = Math.min(Math.max(frame.width, PANEL_MIN_WIDTH), maxWidth);
+  const height = Math.min(Math.max(frame.height, PANEL_MIN_HEIGHT), maxHeight);
+  return {
+    x: Math.min(Math.max(frame.x, PANEL_MARGIN), window.innerWidth - width - PANEL_MARGIN),
+    y: Math.min(Math.max(frame.y, PANEL_TOP_MARGIN), window.innerHeight - height - PANEL_MARGIN),
+    width,
+    height,
+  };
+}
+
+function readStoredPanelFrame(): PanelFrame {
+  if (typeof window === 'undefined') return defaultPanelFrame();
+  const stored = window.localStorage.getItem(PANEL_FRAME_KEY);
+  if (!stored) return defaultPanelFrame();
+  try {
+    const frame = JSON.parse(stored) as PanelFrame;
+    return clampPanelFrame(frame);
+  } catch {
+    return defaultPanelFrame();
+  }
+}
+
+function savePanelFrame(frame: PanelFrame) {
+  window.localStorage.setItem(PANEL_FRAME_KEY, JSON.stringify(clampPanelFrame(frame)));
+}
+
 export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps) {
   const [isCompact, setIsCompact] = useState(false);
+  const [frame, setFrame] = useState<PanelFrame>(() => readStoredPanelFrame());
+  const interactionRef = useRef<PanelInteraction | null>(null);
   const node = selected?.node;
   const accent = node ? accentFor(node.category) : '#0F766E';
   const Icon = node ? getIcon(node.icon) : LucideIcons.Circle;
   const childCount = node?.children?.length ?? 0;
-  const panelSize = isCompact
-    ? { left: 10, right: 10, bottom: 10, width: 'auto', height: 'min(48vh, 360px)' }
-    : { left: 'auto', right: 22, bottom: 22, width: 340, height: 340 };
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 720px)');
@@ -47,6 +103,69 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
   }, []);
+
+  useEffect(() => {
+    if (isCompact) return;
+    const onResize = () => setFrame((current) => clampPanelFrame(current));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [isCompact]);
+
+  useEffect(() => {
+    function onPointerMove(e: PointerEvent) {
+      const interaction = interactionRef.current;
+      if (!interaction) return;
+      const dx = e.clientX - interaction.startX;
+      const dy = e.clientY - interaction.startY;
+      const nextFrame = interaction.mode === 'move'
+        ? { ...interaction.frame, x: interaction.frame.x + dx, y: interaction.frame.y + dy }
+        : { ...interaction.frame, width: interaction.frame.width + dx, height: interaction.frame.height + dy };
+      setFrame(clampPanelFrame(nextFrame));
+    }
+
+    function onPointerUp() {
+      if (!interactionRef.current) return;
+      interactionRef.current = null;
+      setFrame((current) => {
+        const nextFrame = clampPanelFrame(current);
+        savePanelFrame(nextFrame);
+        return nextFrame;
+      });
+    }
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, []);
+
+  function startPanelMove(e: React.PointerEvent) {
+    if (isCompact) return;
+    interactionRef.current = {
+      mode: 'move',
+      startX: e.clientX,
+      startY: e.clientY,
+      frame,
+    };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    e.stopPropagation();
+  }
+
+  function startPanelResize(e: React.PointerEvent) {
+    if (isCompact) return;
+    interactionRef.current = {
+      mode: 'resize',
+      startX: e.clientX,
+      startY: e.clientY,
+      frame,
+    };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    e.stopPropagation();
+  }
 
   return (
     <AnimatePresence>
@@ -59,12 +178,12 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'absolute',
-            top: 'auto',
-            right: panelSize.right,
-            bottom: panelSize.bottom,
-            left: panelSize.left,
-            width: panelSize.width,
-            height: panelSize.height,
+            top: isCompact ? 'auto' : frame.y,
+            right: isCompact ? 10 : 'auto',
+            bottom: isCompact ? 10 : 'auto',
+            left: isCompact ? 10 : frame.x,
+            width: isCompact ? 'auto' : frame.width,
+            height: isCompact ? 'min(48vh, 360px)' : frame.height,
             maxWidth: isCompact ? 'none' : 'calc(100vw - 44px)',
             maxHeight: 'calc(100vh - 82px)',
             overflow: 'hidden',
@@ -88,7 +207,11 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             borderBottom: '1px solid rgba(79,65,42,0.12)',
             background: `linear-gradient(135deg, ${accent}22, rgba(255,250,241,0.72))`,
             flexShrink: 0,
-          }}>
+            cursor: isCompact ? 'default' : 'grab',
+            touchAction: isCompact ? 'auto' : 'none',
+          }}
+            onPointerDown={startPanelMove}
+          >
             <div style={{
               width: isCompact ? 38 : 42,
               height: isCompact ? 38 : 42,
@@ -132,6 +255,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
 
             <button
               onClick={onClose}
+              onPointerDown={(e) => e.stopPropagation()}
               aria-label="Close details"
               style={{
                 width: 28,
@@ -250,6 +374,32 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               <ArrowUpRight size={12} />
             </button>
           </div>
+          {!isCompact && (
+            <button
+              type="button"
+              onPointerDown={startPanelResize}
+              aria-label="Resize detail card"
+              title="Resize detail card"
+              style={{
+                position: 'absolute',
+                right: 8,
+                bottom: 8,
+                width: 24,
+                height: 24,
+                border: '1px solid rgba(79,65,42,0.16)',
+                borderRadius: 9,
+                background: 'rgba(255,255,255,0.52)',
+                color: '#55665C',
+                cursor: 'nwse-resize',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                touchAction: 'none',
+              }}
+            >
+              <Maximize2 size={11} />
+            </button>
+          )}
         </motion.aside>
       )}
     </AnimatePresence>

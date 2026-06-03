@@ -2,16 +2,12 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
-const heroImage = new URL("../../assets/hero.png", import.meta.url).href;
 const architectFrontImage = new URL("../../assets/hero-gallery-architect-front.png", import.meta.url).href;
 const architectProfileImage = new URL("../../assets/hero-gallery-architect-profile.png", import.meta.url).href;
-const storyboardImage = new URL("../../assets/hero-gallery-storyboard.png", import.meta.url).href;
 
 const gallerySlides = [
-  { src: heroImage, alt: "Human Behavior Architect visual" },
-  { src: architectFrontImage, alt: "User Behavior Architect portrait interface" },
   { src: architectProfileImage, alt: "User Behavior Architect profile interface" },
-  { src: storyboardImage, alt: "User Behavior Architect storyboard gallery" },
+  { src: architectFrontImage, alt: "User Behavior Architect portrait interface" },
 ];
 
 type HomePageProps = {

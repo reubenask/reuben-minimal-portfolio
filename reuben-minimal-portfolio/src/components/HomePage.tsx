@@ -52,7 +52,7 @@ export function HomePage({ onOpenArchive }: HomePageProps) {
           href="mailto:reuben@zju.edu.cn"
           className="rounded-full border border-white/10 bg-black/25 px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.32em] text-slate-100/90 backdrop-blur-xl transition hover:border-cyan-200/35 hover:text-cyan-50"
         >
-          Reuben S. K. Agbozo
+          User Behavior Architect
         </a>
         <button
           onClick={onOpenArchive}

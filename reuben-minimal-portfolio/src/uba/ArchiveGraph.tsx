@@ -126,7 +126,6 @@ export function ArchiveGraph({
 
   // ── Drag ──────────────────────────────────────────────────────────────
   function startNodeDrag(e: React.MouseEvent, nodeId: string) {
-    if (!isEditable) return;
     const { x, y } = pos(nodeId);
     nodeDragRef.current = { id: nodeId, startMX: e.clientX, startMY: e.clientY, startX: x, startY: y, moved: false };
     e.stopPropagation();
@@ -259,7 +258,8 @@ export function ArchiveGraph({
       }}>
         {[
           '▶ Click folder to expand',
-          ...(isEditable ? ['✎ Double-click to rename', '⊹ Drag nodes to reposition'] : ['◇ Select any node for details']),
+          ...(isEditable ? ['✎ Double-click to rename'] : ['◇ Select any node for details']),
+          '⊹ Drag nodes to reposition',
           '◎ Scroll to zoom · Drag to pan',
         ].map((h) => (
           <p key={h} style={{ fontSize: 8, letterSpacing: '0.1em', color: '#766B5B',

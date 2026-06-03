@@ -50,8 +50,8 @@ export function ItemNode({ node, x, y, index, isSelected, onClick, onDragStart, 
       exit={{ opacity: 0, scale: 0.3 }}
       transition={{ duration: 0.35, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ scale: 1.24 }}
-      style={{ cursor: isEditable ? 'grab' : 'pointer', transformBox: 'fill-box', transformOrigin: 'center' }}
-      onMouseDown={(e) => { if (!editing) { e.stopPropagation(); if (isEditable) onDragStart(e); } }}
+      style={{ cursor: 'grab', transformBox: 'fill-box', transformOrigin: 'center' }}
+      onMouseDown={(e) => { if (!editing) { e.stopPropagation(); onDragStart(e); } }}
       onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
       onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
     >

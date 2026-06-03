@@ -80,9 +80,10 @@ export function UbaArchive() {
           letterSpacing: '0.34em', color: '#EAFBF8', textTransform: 'uppercase',
           fontFamily: "'IBM Plex Mono', monospace",
         }}>
-          User Behavior Archive <span style={{ color: '#6F8F8A', fontWeight: 400, letterSpacing: '0.14em' }}>
-            · {isEditorMode ? 'Edit Studio' : 'Public Knowledge Graph'}
-          </span>
+          User Behavior Archive
+          {isEditorMode && (
+            <span style={{ color: '#6F8F8A', fontWeight: 400, letterSpacing: '0.14em' }}> · Edit Studio</span>
+          )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 52 }}>

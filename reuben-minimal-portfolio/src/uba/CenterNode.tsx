@@ -33,7 +33,7 @@ export function CenterNode({ node, x, y, isSelected, avatarUrl, onClick, onDragS
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ cursor: isEditable ? 'grab' : 'pointer', transformOrigin: `${x}px ${y}px` }}
+      style={{ cursor: 'grab', transformOrigin: `${x}px ${y}px` }}
       onMouseDown={onDragStart}
       onClick={onClick}
     >

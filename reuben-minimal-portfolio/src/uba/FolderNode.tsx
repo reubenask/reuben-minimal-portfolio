@@ -73,13 +73,13 @@ export function FolderNode({ node, x, y, isSelected, onClick, onDragStart, onLab
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       // Hover magnifier: scale up from the node's own center
       whileHover={{ scale: 1.22, filter: 'drop-shadow(0 24px 34px rgba(0,0,0,0.24))' }}
-      style={{ cursor: isEditable ? 'grab' : 'pointer', transformBox: 'fill-box', transformOrigin: 'center' }}
+      style={{ cursor: 'grab', transformBox: 'fill-box', transformOrigin: 'center' }}
     >
       <foreignObject
         x={x - halfW} y={y - halfH - 12}
         width={w + 8} height={h + 36}
         style={{ overflow: 'visible' }}
-        onMouseDown={(e) => { e.stopPropagation(); if (isEditable) onDragStart(e as unknown as React.MouseEvent); }}
+        onMouseDown={(e) => { e.stopPropagation(); onDragStart(e as unknown as React.MouseEvent); }}
         onClick={(e) => { if (!editing) { e.stopPropagation(); onClick(); } }}
         onDoubleClick={(e) => { e.stopPropagation(); if (isEditable) setEditing(true); }}
       >

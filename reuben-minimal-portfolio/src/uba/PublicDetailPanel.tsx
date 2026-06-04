@@ -39,11 +39,11 @@ type PanelFrame = {
 
 type PanelInteraction =
   | { mode: 'move'; startX: number; startY: number; frame: PanelFrame }
-  | { mode: 'resize'; startX: number; startY: number; frame: PanelFrame };
+  | { mode: 'resize'; edge: 'right' | 'bottom' | 'corner'; startX: number; startY: number; frame: PanelFrame };
 
 const PANEL_FRAME_KEY = 'uba_public_detail_panel_frame';
-const PANEL_MIN_WIDTH = 280;
-const PANEL_MIN_HEIGHT = 260;
+const PANEL_MIN_WIDTH = 220;
+const PANEL_MIN_HEIGHT = 190;
 const PANEL_MARGIN = 14;
 const PANEL_TOP_MARGIN = 64;
 
@@ -119,7 +119,11 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
       const dy = e.clientY - interaction.startY;
       const nextFrame = interaction.mode === 'move'
         ? { ...interaction.frame, x: interaction.frame.x + dx, y: interaction.frame.y + dy }
-        : { ...interaction.frame, width: interaction.frame.width + dx, height: interaction.frame.height + dy };
+        : {
+            ...interaction.frame,
+            width: interaction.edge === 'bottom' ? interaction.frame.width : interaction.frame.width + dx,
+            height: interaction.edge === 'right' ? interaction.frame.height : interaction.frame.height + dy,
+          };
       setFrame(clampPanelFrame(nextFrame));
     }
 
@@ -155,10 +159,11 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
     e.stopPropagation();
   }
 
-  function startPanelResize(e: React.PointerEvent) {
+  function startPanelResize(e: React.PointerEvent, edge: 'right' | 'bottom' | 'corner') {
     if (isCompact) return;
     interactionRef.current = {
       mode: 'resize',
+      edge,
       startX: e.clientX,
       startY: e.clientY,
       frame,
@@ -375,30 +380,69 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             </button>
           </div>
           {!isCompact && (
-            <button
-              type="button"
-              onPointerDown={startPanelResize}
-              aria-label="Resize detail card"
-              title="Resize detail card"
-              style={{
-                position: 'absolute',
-                right: 8,
-                bottom: 8,
-                width: 24,
-                height: 24,
-                border: '1px solid rgba(79,65,42,0.16)',
-                borderRadius: 9,
-                background: 'rgba(255,255,255,0.52)',
-                color: '#55665C',
-                cursor: 'nwse-resize',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                touchAction: 'none',
-              }}
-            >
-              <Maximize2 size={11} />
-            </button>
+            <>
+              <button
+                type="button"
+                onPointerDown={(e) => startPanelResize(e, 'right')}
+                aria-label="Resize detail card width"
+                title="Drag to stretch width"
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 74,
+                  bottom: 38,
+                  width: 12,
+                  border: 'none',
+                  borderRadius: '10px 0 0 10px',
+                  background: 'linear-gradient(90deg, transparent, rgba(15,118,110,0.13))',
+                  cursor: 'ew-resize',
+                  touchAction: 'none',
+                }}
+              />
+              <button
+                type="button"
+                onPointerDown={(e) => startPanelResize(e, 'bottom')}
+                aria-label="Resize detail card height"
+                title="Drag to stretch height"
+                style={{
+                  position: 'absolute',
+                  left: 24,
+                  right: 38,
+                  bottom: 0,
+                  height: 12,
+                  border: 'none',
+                  borderRadius: '10px 10px 0 0',
+                  background: 'linear-gradient(180deg, transparent, rgba(15,118,110,0.13))',
+                  cursor: 'ns-resize',
+                  touchAction: 'none',
+                }}
+              />
+              <button
+                type="button"
+                onPointerDown={(e) => startPanelResize(e, 'corner')}
+                aria-label="Resize detail card"
+                title="Drag to resize detail card"
+                style={{
+                  position: 'absolute',
+                  right: 7,
+                  bottom: 7,
+                  width: 34,
+                  height: 34,
+                  border: '1px solid rgba(15,118,110,0.24)',
+                  borderRadius: 12,
+                  background: 'rgba(255,255,255,0.68)',
+                  color: '#315A53',
+                  cursor: 'nwse-resize',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 8px 20px rgba(86,64,34,0.14)',
+                  touchAction: 'none',
+                }}
+              >
+                <Maximize2 size={14} />
+              </button>
+            </>
           )}
         </motion.aside>
       )}

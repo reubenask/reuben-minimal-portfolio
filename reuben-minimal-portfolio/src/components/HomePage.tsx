@@ -4,13 +4,11 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const architectFrontImage = new URL("../../assets/hero-gallery-architect-front.png", import.meta.url).href;
 const architectProfileImage = new URL("../../assets/hero-gallery-architect-profile.png", import.meta.url).href;
-const behaviorMapImage = new URL("../../assets/hero-gallery-behavior-architect-map.png", import.meta.url).href;
 const archiveVisualImage = new URL("../../assets/hero-gallery-archive-visual.png", import.meta.url).href;
 
 const gallerySlides = [
   { src: architectProfileImage, alt: "User Behavior Architect profile interface" },
   { src: architectFrontImage, alt: "User Behavior Architect portrait interface" },
-  { src: behaviorMapImage, alt: "Human Behavior Architect systems map" },
   { src: archiveVisualImage, alt: "User Behavior Archive visual concept" },
 ];
 

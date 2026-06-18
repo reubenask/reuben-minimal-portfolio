@@ -5,10 +5,12 @@ import { HeroScene } from "./HeroScene";
 
 const architectFrontImage = new URL("../../assets/hero-gallery-architect-front.png", import.meta.url).href;
 const architectProfileImage = new URL("../../assets/hero-gallery-architect-profile.png", import.meta.url).href;
+const archiveVisualImage = new URL("../../assets/hero-gallery-archive-visual.png", import.meta.url).href;
 
 const gallerySlides = [
   { src: architectProfileImage, alt: "User Behavior Architect profile interface" },
   { src: architectFrontImage, alt: "User Behavior Architect portrait interface" },
+  { src: archiveVisualImage, alt: "Distant User Behavior Architect horizon" },
 ];
 
 type HomePageProps = {
@@ -71,20 +73,11 @@ export function HomePage({ onOpenArchive }: HomePageProps) {
         className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col justify-center px-6 pb-8 pt-28 max-sm:px-5 max-sm:pb-6"
       >
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
-          <div className="mb-8 text-center max-sm:mb-6">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-cyan-100/70">
-              User Behavior Architect
-            </p>
-            <p className="mt-4 text-[clamp(1.35rem,3vw,2.9rem)] font-semibold uppercase leading-tight tracking-[0.26em] text-white/90 max-sm:tracking-[0.14em]">
-              Research. Systems. Human Behavior.
-            </p>
-          </div>
-
           <button
             type="button"
             onClick={onOpenArchive}
             className="group relative max-w-full outline-none [perspective:1400px]"
-            style={{ width: "min(82vw, 980px, calc((100svh - 15.5rem) * 1.777))" }}
+            style={{ width: "min(82vw, 980px, calc((100svh - 9.5rem) * 1.777))" }}
             aria-label="Open User Behavior Archive"
           >
             <div className="pointer-events-none absolute inset-x-[9%] bottom-[-16%] h-[34%] rounded-[50%] bg-cyan-300/18 blur-3xl transition duration-700 group-hover:bg-cyan-200/25" />
@@ -107,11 +100,7 @@ export function HomePage({ onOpenArchive }: HomePageProps) {
             </div>
           </button>
 
-          <div className="mt-7 flex w-full max-w-[980px] items-end justify-between gap-5 max-md:flex-col max-md:items-center">
-            <p className="max-w-[38rem] text-sm leading-7 text-slate-100/68 max-md:text-center">
-              Research, design, and intelligent systems shaped around how people decide, learn, and work.
-            </p>
-
+          <div className="mt-7 flex w-full max-w-[980px] justify-center">
             <div className="flex items-center gap-2 rounded-full border border-white/12 bg-black/35 px-3 py-2 shadow-[0_18px_70px_rgba(0,0,0,.35)] backdrop-blur-xl">
               <button
                 type="button"

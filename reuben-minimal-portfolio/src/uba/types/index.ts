@@ -20,6 +20,13 @@ export interface GraphNode {
   collapsed?: boolean;
   files?: FileAttachment[];          // attached documents per node
   weight?: number;                   // visual sizing weight (1=item, 2=folder, 3=center)
+  content?: {
+    kind: 'article';
+    slug: string;
+    title: string;
+    date?: string;
+    readingTime?: string;
+  };
 }
 
 export interface PositionedNode extends GraphNode {

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 import { ArrowUpRight, Image, Layers, Link2, Maximize2, Sparkles, X } from 'lucide-react';
 import type { SelectedNode } from './types';
+import { ArticleReader, FeaturedArticlePreview } from './FeaturedArticle';
 
 const CATEGORY_ACCENT: Record<string, string> = {
   story: '#5E8B6E',
@@ -89,12 +90,14 @@ function savePanelFrame(frame: PanelFrame) {
 
 export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps) {
   const [isCompact, setIsCompact] = useState(false);
+  const [isArticleOpen, setIsArticleOpen] = useState(false);
   const [frame, setFrame] = useState<PanelFrame>(() => readStoredPanelFrame());
   const interactionRef = useRef<PanelInteraction | null>(null);
   const node = selected?.node;
   const accent = node ? accentFor(node.category) : '#0F766E';
   const Icon = node ? getIcon(node.icon) : LucideIcons.Circle;
   const childCount = node?.children?.length ?? 0;
+  const isFeaturedArticle = node?.content?.kind === 'article';
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 720px)');
@@ -259,7 +262,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             </div>
 
             <button
-              onClick={onClose}
+              onClick={() => { setIsArticleOpen(false); onClose(); }}
               onPointerDown={(e) => e.stopPropagation()}
               aria-label="Close details"
               style={{
@@ -289,6 +292,10 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
             flexDirection: 'column',
             gap: isCompact ? 9 : 12,
           }}>
+            {isFeaturedArticle ? (
+              <FeaturedArticlePreview onRead={() => setIsArticleOpen(true)} />
+            ) : (
+              <>
             <SectionTitle icon={<Sparkles size={12} />} label="Overview" />
             <p style={{
               margin: 0,
@@ -378,6 +385,8 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               Full Dossier Coming Soon
               <ArrowUpRight size={12} />
             </button>
+              </>
+            )}
           </div>
           {!isCompact && (
             <>
@@ -444,6 +453,7 @@ export function PublicDetailPanel({ selected, onClose }: PublicDetailPanelProps)
               </button>
             </>
           )}
+          <ArticleReader open={isArticleOpen} onClose={() => setIsArticleOpen(false)} />
         </motion.aside>
       )}
     </AnimatePresence>

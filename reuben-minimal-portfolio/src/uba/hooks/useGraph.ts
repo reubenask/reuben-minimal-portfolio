@@ -23,7 +23,23 @@ function findNode(node: GraphNode, id: string): GraphNode | null {
 }
 
 function loadSaved(): GraphNode {
-  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch { /* */ }
+  try {
+    const r = localStorage.getItem(STORAGE_KEY);
+    if (r) {
+      const saved = JSON.parse(r) as GraphNode;
+      const publishedArticle = findNode(initialGraphData, 'story-public-thinking');
+      if (publishedArticle) {
+        return findAndUpdate(saved, publishedArticle.id, (node) => ({
+          ...node,
+          icon: publishedArticle.icon,
+          description: publishedArticle.description,
+          weight: publishedArticle.weight,
+          content: publishedArticle.content,
+        }));
+      }
+      return saved;
+    }
+  } catch { /* */ }
   return deepClone(initialGraphData);
 }
 function loadPositions(): Record<string, { x: number; y: number }> {
